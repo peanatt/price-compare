@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Price Comparison</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Baloo+Thai+2:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Baloo+Thai+2:wght@400;500;600;700;800&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body,div,span,p,button,input,select,textarea,td,th,label,a{
+  font-family:'Baloo 2','Baloo Thai 2',Tahoma,sans-serif !important;
+}
+:root{
+  --bg:       #dbeeff;
+  --bg2:      #e8f4ff;
+  --card:     rgba(255,255,255,0.75);
+  --card2:    rgba(255,255,255,0.90);
+  --card3:    rgba(186,224,255,0.30);
+  --border:   rgba(100,170,240,0.30);
+  --border2:  rgba(80,150,230,0.45);
+  --text:     #1a3a5c;
+  --text2:    #1e4a70;
+  --text3:    #3a6080;
+  --sky:      #2e86de;
+  --pink:     #e84393;
+  --mint:     #0a9e6e;
+  --yellow:   #d4900a;
+  --lilac:    #5a72e8;
+  --gold:     #c47d00;
+  --gold2:    #b8690a;
+  --win-bg:   rgba(255,230,80,0.40);
+  --win-text: #7a4f00;
+  --r:12px;--r2:18px;--r3:24px;
+  --shadow:0 8px 32px rgba(80,140,220,0.18);
+  --shadow2:0 20px 56px rgba(80,140,220,0.22);
+}
+body{
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+  background:
+    radial-gradient(ellipse at 20% 30%, rgba(255,236,100,0.40) 0%, transparent 45%),
+    radial-gradient(ellipse at 75% 15%, rgba(150,210,255,0.50) 0%, transparent 40%),
+    radial-gradient(ellipse at 50% 70%, rgba(200,230,255,0.40) 0%, transparent 40%),
+    radial-gradient(ellipse at 10% 80%, rgba(255,245,140,0.30) 0%, transparent 35%),
+    radial-gradient(ellipse at 88% 72%, rgba(120,190,255,0.30) 0%, transparent 35%),
+    linear-gradient(160deg, #cde9ff 0%, #d8efff 35%, #e8f7ff 65%, #fefbd8 100%);
+  color:var(--text);font-size:14px;line-height:1.6;overflow-x:hidden;
+}
+
+/* ── CANVAS BG ── */
+#star-canvas{position:fixed;inset:0;pointer-events:none;z-index:0;}
+
+/* ── FLOATING CUTE DECO ── */
+.deco{position:fixed;pointer-events:none;z-index:1;opacity:.82;
+  filter:drop-shadow(0 2px 8px rgba(255,255,255,.12));}
+@keyframes floatY{0%,100%{transform:translateY(0);}50%{transform:translateY(-14px);}}
+@keyframes floatX{0%,100%{transform:translateY(0) rotate(0deg);}50%{transform:translateY(-9px) rotate(-5deg);}}
+@keyframes twinkle{0%,100%{opacity:.4;transform:scale(.85);}50%{opacity:.9;transform:scale(1.1);}}
+@keyframes drift{0%,100%{transform:translate(0,0);}50%{transform:translate(6px,-12px);}}
+
+/* positions */
+.d-moon   {top:4%;right:8%;font-size:34px;animation:floatY 5s ease-in-out infinite;}
+.d-ufo    {top:26%;right:3%;font-size:28px;animation:floatX 6s ease-in-out infinite;animation-delay:.5s;}
+.d-rocket1{top:50%;right:2%;font-size:22px;animation:floatY 4.5s ease-in-out infinite;animation-delay:1s;}
+.d-rocket2{bottom:20%;left:3%;font-size:20px;animation:floatY 5.5s ease-in-out infinite;}
+.d-planet1{top:38%;left:2%;font-size:26px;animation:floatX 7s ease-in-out infinite;animation-delay:.8s;}
+.d-planet2{bottom:14%;right:6%;font-size:22px;animation:floatX 6.5s ease-in-out infinite;animation-delay:1.2s;}
+.d-alien  {top:18%;left:5%;font-size:22px;animation:floatY 5s ease-in-out infinite;animation-delay:.3s;}
+.d-comet  {top:10%;left:35%;font-size:18px;animation:drift 9s ease-in-out infinite;}
+.d-star1  {top:15%;right:22%;font-size:18px;color:#fde68a;animation:twinkle 2.5s ease-in-out infinite;}
+.d-star2  {top:60%;right:15%;font-size:14px;color:#c4b5fd;animation:twinkle 3.2s ease-in-out infinite;animation-delay:.7s;}
+.d-star3  {bottom:30%;left:12%;font-size:15px;color:#93c5fd;animation:twinkle 2.8s ease-in-out infinite;animation-delay:1.4s;}
+.d-star4  {bottom:8%;left:40%;font-size:20px;color:#fde68a;animation:twinkle 2.2s ease-in-out infinite;}
+
+.app{max-width:1380px;margin:0 auto;padding:22px 28px;position:relative;z-index:2;}
+
+/* ── HEADER ── */
+.header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 22px;margin-bottom:22px;
+  background:rgba(255,255,255,0.75);
+  border:1px solid rgba(100,170,240,0.40);border-radius:var(--r3);
+  backdrop-filter:blur(22px);
+  box-shadow:var(--shadow),inset 0 1px 0 rgba(255,255,255,.90);
+}
+.header-left{display:flex;align-items:center;gap:14px;}
+.logo-wrap{
+  width:48px;height:48px;border-radius:16px;
+  background:linear-gradient(135deg,rgba(196,181,253,.25),rgba(147,197,253,.2));
+  border:1.5px solid rgba(196,181,253,.4);
+  display:flex;align-items:center;justify-content:center;font-size:24px;
+  box-shadow:0 4px 16px rgba(196,181,253,.2);
+}
+.header-title{font-size:22px;font-weight:800;color:#1a3a5c;letter-spacing:-.01em;text-shadow:0 1px 4px rgba(80,140,220,.15);}
+.header-right{display:flex;gap:8px;}
+
+/* ── BUTTONS ── */
+.btn{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:9px 20px;border-radius:50px;border:none;
+  font-family:'Baloo 2','Baloo Thai 2',sans-serif !important;
+  font-size:13px;font-weight:700;cursor:pointer;transition:all .18s;white-space:nowrap;
+}
+.btn-primary{background:linear-gradient(135deg,#a78bfa,#7c6cf5);color:#fff;box-shadow:0 4px 16px rgba(167,139,250,.4);}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(167,139,250,.5);}
+.btn-success{background:linear-gradient(135deg,#34d399,#059669);color:#fff;box-shadow:0 4px 14px rgba(52,211,153,.35);}
+.btn-success:hover{transform:translateY(-2px);}
+.btn-gold{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#1a0a00;font-weight:800;box-shadow:0 4px 16px rgba(251,191,36,.4);}
+.btn-gold:hover{transform:translateY(-2px);}
+.btn-danger{background:linear-gradient(135deg,#f87171,#ef4444);color:#fff;box-shadow:0 4px 12px rgba(239,68,68,.3);}
+.btn-danger:hover{transform:translateY(-2px);}
+.btn-ghost{
+  background:rgba(255,255,255,0.75);color:#1a3a5c;
+  border:1.5px solid rgba(80,150,220,.40);backdrop-filter:blur(8px);
+}
+.btn-ghost:hover{background:rgba(200,230,255,0.80);color:#0d2a4a;}
+.btn-sm{padding:6px 14px;font-size:12px;}
+.btn-icon{width:36px;height:36px;padding:0;justify-content:center;border-radius:10px;}
+
+/* ── METRICS ── */
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
+.metric{
+  background:rgba(255,255,255,0.80);border:1px solid var(--border);
+  border-radius:var(--r2);padding:16px 18px;backdrop-filter:blur(14px);
+  box-shadow:0 4px 18px rgba(80,140,220,.12),inset 0 1px 0 rgba(255,255,255,.95);
+  display:flex;align-items:center;gap:14px;
+}
+.metric-icon-wrap{
+  width:44px;height:44px;border-radius:13px;
+  display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;
+}
+.m-blue .metric-icon-wrap{background:linear-gradient(135deg,rgba(147,197,253,.2),rgba(96,165,250,.12));border:1px solid rgba(147,197,253,.25);}
+.m-yellow .metric-icon-wrap{background:linear-gradient(135deg,rgba(253,230,138,.2),rgba(251,191,36,.12));border:1px solid rgba(253,230,138,.25);}
+.m-green .metric-icon-wrap{background:linear-gradient(135deg,rgba(110,231,183,.2),rgba(52,211,153,.12));border:1px solid rgba(110,231,183,.25);}
+.m-pink .metric-icon-wrap{background:linear-gradient(135deg,rgba(249,168,212,.2),rgba(236,72,153,.12));border:1px solid rgba(249,168,212,.25);}
+.metric-num{font-size:28px;font-weight:800;color:#1a3a5c;text-shadow:0 1px 4px rgba(80,140,220,.12);}
+.metric-label{font-size:11px;color:#3a6080;font-weight:700;margin-top:2px;}
+
+/* ── LAYOUT ── */
+.jobs-wrap{display:grid;grid-template-columns:270px 1fr;gap:18px;align-items:start;}
+
+/* ── JOBS PANEL ── */
+.jobs-panel{
+  background:rgba(255,255,255,0.80);border:1px solid var(--border);
+  border-radius:var(--r2);overflow:hidden;backdrop-filter:blur(14px);
+  box-shadow:0 4px 18px rgba(80,140,220,.12);
+}
+.jobs-panel-header{
+  padding:13px 16px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(190,225,255,0.45);
+}
+.jobs-panel-title{font-size:13px;font-weight:800;color:#1a3a5c;}
+.jobs-panel-count{font-size:11px;color:#3a6080;font-weight:700;}
+.jobs-list{padding:10px;}
+.job-item{
+  padding:11px 13px;border-radius:var(--r);cursor:pointer;
+  border:1.5px solid transparent;transition:all .15s;margin-bottom:6px;
+}
+.job-item:hover{background:rgba(196,181,253,.1);border-color:rgba(196,181,253,.25);}
+.job-item.active{
+  background:linear-gradient(135deg,rgba(167,139,250,.18),rgba(147,197,253,.12));
+  border-color:var(--lilac);box-shadow:0 3px 14px rgba(167,139,250,.2);
+}
+.job-name{font-size:13px;font-weight:800;color:#1a3a5c;margin-bottom:3px;text-shadow:none;}
+.job-meta{font-size:11px;color:#3a6080;display:flex;gap:8px;flex-wrap:wrap;}
+.job-badges{display:flex;gap:5px;margin-top:6px;flex-wrap:wrap;}
+.jbadge{font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px;display:inline-flex;align-items:center;gap:3px;}
+.jb-blue{background:rgba(80,160,240,.15);color:#1a5fa0;border:1px solid rgba(80,160,240,.35);}
+.jb-green{background:rgba(40,180,120,.15);color:#0a6a40;border:1px solid rgba(40,180,120,.30);}
+.jb-gold{background:rgba(255,210,40,.25);color:#7a4f00;border:1px solid rgba(220,170,0,.35);}
+
+/* ── COMPARE PANEL ── */
+.compare-panel-wrap{
+  background:rgba(255,255,255,0.80);border:1px solid var(--border);
+  border-radius:var(--r2);overflow:hidden;backdrop-filter:blur(14px);
+  box-shadow:0 4px 18px rgba(80,140,220,.12);
+}
+.compare-top{
+  padding:14px 20px;border-bottom:1px solid var(--border);
+  display:flex;align-items:flex-start;justify-content:space-between;
+  gap:12px;background:rgba(190,225,255,0.40);flex-wrap:wrap;
+}
+.compare-title{font-size:17px;font-weight:800;color:#1a3a5c;text-shadow:none;}
+.compare-sub{font-size:11px;color:#3a6080;margin-top:2px;}
+.compare-body{padding:18px 20px;}
+
+/* ── SELECTOR PANEL ── */
+.selector-panel{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  padding:12px 14px;margin-bottom:14px;
+  background:rgba(210,235,255,0.50);
+  border:1px solid var(--border);border-radius:var(--r);
+}
+
+/* ── SELECTOR ROW ── */
+.selector-row{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  padding:12px 14px;margin-bottom:6px;
+  background:rgba(210,235,255,0.50);
+  border:1px solid var(--border);border-radius:var(--r);
+}
+.selector-label{font-size:11px;font-weight:800;color:#1e4a70;
+  white-space:nowrap;text-transform:uppercase;letter-spacing:.04em;}
+.sup-chips{display:flex;gap:8px;flex-wrap:wrap;flex:1;align-items:center;}
+.sup-chip{
+  padding:6px 14px;border-radius:50px;font-size:12px;font-weight:700;cursor:pointer;
+  border:1.5px solid rgba(80,150,220,.35);background:rgba(255,255,255,0.70);color:#1a3a5c;
+  transition:all .15s;display:flex;align-items:center;gap:6px;
+}
+.sup-chip:hover{background:rgba(180,215,255,.50);border-color:rgba(80,140,220,.55);color:#0d2a4a;}
+.sup-chip.sel{
+  background:linear-gradient(135deg,rgba(120,170,250,.28),rgba(160,200,255,.20));
+  border-color:#3a7ad4;color:#0d2a4a;
+  box-shadow:0 2px 10px rgba(80,140,230,.20);
+}
+.sup-chip.winner-chip{
+  background:linear-gradient(135deg,rgba(255,220,60,.35),rgba(255,240,140,.25));
+  border-color:#c4920a;color:#7a4800;
+  box-shadow:0 2px 10px rgba(220,170,0,.25);
+}
+.sup-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;display:inline-block;}
+
+/* ── PRICE BTNS ── */
+.price-btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;margin-bottom:16px;padding-top:14px;border-top:1px solid var(--border);}
+.price-btn{
+  padding:7px 16px;border-radius:50px;font-size:12px;font-weight:700;cursor:pointer;
+  border:1.5px solid;background:rgba(255,255,255,.07);
+  transition:all .15s;display:flex;align-items:center;gap:6px;
+  font-family:'Baloo 2','Baloo Thai 2',sans-serif !important;
+}
+.price-btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.14);}
+
+/* ── TABLE ── */
+.table-wrap{overflow-x:auto;border-radius:var(--r2);border:1px solid rgba(80,140,220,.35);
+  box-shadow:0 4px 20px rgba(80,140,220,.12);}
+table{width:100%;border-collapse:collapse;}
+thead{background:linear-gradient(135deg,rgba(80,140,230,.18),rgba(120,190,255,.12));}
+th{
+  padding:13px 16px;
+  font-family:'Baloo 2','Baloo Thai 2',sans-serif !important;
+  font-weight:800;font-size:11px;color:#1a3a5c;
+  border-bottom:2px solid rgba(80,140,220,.40);
+  border-right:1px solid rgba(80,140,220,.25);
+  letter-spacing:.04em;text-transform:uppercase;white-space:nowrap;
+  text-align:center;
+}
+th:first-child{text-align:left;}
+th:last-child{border-right:none;}
+th.t-center{text-align:center;}
+th.t-right{text-align:center;}
+tbody tr{border-bottom:1px solid rgba(80,140,220,.18);transition:background .12s;}
+tbody tr:last-child{border-bottom:none;}
+tbody tr:hover{background:rgba(180,220,255,.18);}
+td{
+  padding:14px 16px;color:#1a3a5c;
+  font-family:'Baloo 2','Baloo Thai 2',sans-serif !important;
+  font-weight:600;vertical-align:middle;
+  border-right:1px solid rgba(80,140,220,.18);
+  text-align:center;
+}
+td:first-child{text-align:left;border-left:none;}
+td:last-child{border-right:none;}
+td.t-center{text-align:center;color:#2a5070;}
+td.t-right{text-align:center;font-weight:700;}
+td.item-name{font-weight:800;color:#0d2a4a;text-shadow:none;text-align:left;}
+td.win{background:rgba(255,220,50,.28);color:#7a4800;font-weight:800;}
+td.num{text-align:center;}
+
+tr.row-sub td{
+  background:rgba(180,220,255,.22);font-weight:800;color:#1a4070;
+  border-top:2px solid rgba(80,140,220,.35);
+}
+tr.row-grand td{
+  background:linear-gradient(135deg,rgba(80,140,230,.20),rgba(120,190,255,.14));
+  font-weight:800;color:#0d2a4a;border-top:2px solid #3a7ad4;font-size:14px;text-shadow:none;
+}
+tr.row-grand td.win{background:rgba(255,220,50,.30);color:#7a4800;}
+
+/* ── SUMMARY ── */
+.summary-card{
+  margin-top:16px;padding:16px 18px;
+  background:rgba(255,230,80,.18);border:1px solid rgba(200,160,0,.35);
+  border-radius:var(--r2);backdrop-filter:blur(12px);
+}
+.summary-title{font-size:13px;font-weight:800;color:#7a4800;margin-bottom:12px;display:flex;align-items:center;gap:7px;}
+.summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;}
+.sum-item{background:rgba(255,255,255,.75);border:1px solid rgba(80,140,220,.20);border-radius:var(--r);padding:12px 14px;}
+.sum-item.winner{background:rgba(255,230,80,.25);border-color:rgba(200,155,0,.45);box-shadow:0 4px 14px rgba(220,170,0,.15);}
+.si-lbl{font-size:10px;color:#3a6080;font-weight:700;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em;}
+.si-val{font-size:16px;font-weight:800;color:#0d2a4a;}
+.si-val.gold{color:#7a4800;}
+.si-save{font-size:11px;color:#0a6a40;font-weight:700;margin-top:3px;}
+
+/* ── MODAL ── */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(80,130,200,.25);
+  display:none;align-items:center;justify-content:center;
+  z-index:1000;padding:20px;backdrop-filter:blur(12px);
+}
+.modal-overlay.open{display:flex;}
+.modal{
+  background:linear-gradient(135deg,rgba(240,250,255,.98),rgba(255,255,255,.99));
+  border:1px solid rgba(80,150,230,.35);border-radius:var(--r3);width:100%;max-width:600px;
+  max-height:90vh;overflow-y:auto;
+  box-shadow:0 24px 60px rgba(80,140,220,.25),inset 0 1px 0 rgba(255,255,255,.95);
+}
+.modal::-webkit-scrollbar{width:4px;}
+.modal::-webkit-scrollbar-thumb{background:rgba(80,140,220,.30);border-radius:10px;}
+.modal-header{
+  padding:18px 22px 14px;border-bottom:1px solid rgba(80,140,220,.20);
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(200,230,255,0.40);
+}
+.modal-title{font-size:15px;font-weight:800;color:#0d2a4a;}
+.modal-body{padding:18px 22px;}
+.modal-footer{
+  padding:13px 22px;border-top:1px solid rgba(80,140,220,.15);
+  display:flex;gap:8px;justify-content:flex-end;background:rgba(220,238,255,.30);
+}
+
+/* ── FORM ── */
+.form-group{margin-bottom:14px;}
+.form-label{font-size:11px;font-weight:800;color:#2a5070;
+  margin-bottom:5px;display:block;text-transform:uppercase;letter-spacing:.04em;}
+.form-input,.form-select,.form-textarea{
+  width:100%;padding:9px 13px;border-radius:var(--r);
+  border:1.5px solid rgba(80,150,220,.35);background:rgba(240,250,255,.80);
+  color:#0d2a4a !important;
+  font-family:'Baloo 2','Baloo Thai 2',sans-serif !important;
+  font-size:13px;font-weight:700;transition:border-color .15s;
+}
+.form-input:focus,.form-select:focus,.form-textarea:focus{
+  outline:none;border-color:#3a7ad4;box-shadow:0 0 0 3px rgba(80,140,220,.18);
+}
+.form-input::placeholder,.form-textarea::placeholder{color:rgba(60,100,150,.40);}
+.form-select option{background:#eaf4ff;color:#0d2a4a;}
+.form-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
+/* ── ITEMS TABLE in modal ── */
+.items-table-wrap{border-radius:var(--r);overflow:hidden;border:1px solid var(--border);}
+.items-table{width:100%;border-collapse:collapse;font-size:12px;}
+.items-table th{
+  background:rgba(160,210,255,.25);padding:9px 10px;text-align:left;
+  font-weight:800;color:#0d2a4a;border-bottom:1px solid rgba(80,140,220,.20);
+  font-size:11px;text-transform:uppercase;letter-spacing:.03em;
+  font-family:'Baloo 2','Baloo Thai 2',sans-serif !important;
+}
+.items-table td{padding:8px 9px;border-bottom:1px solid rgba(80,140,220,.10);color:#1a3a5c;font-weight:600;}
+.items-table tr:last-child td{border-bottom:none;}
+.items-table input{
+  background:rgba(240,250,255,.85);border:1.5px solid rgba(80,140,220,.25);border-radius:8px;
+  color:#0d2a4a !important;
+  font-family:'Baloo 2','Baloo Thai 2',sans-serif !important;
+  font-size:12px;font-weight:600;padding:5px 8px;width:100%;transition:border-color .15s;
+}
+.items-table input:focus{outline:none;border-color:#3a7ad4;}
+.add-item-row{padding:8px;text-align:center;background:rgba(210,235,255,.30);}
+
+/* ── TOAST ── */
+.toast-container{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px;}
+.toast{
+  padding:10px 18px;border-radius:12px;font-size:13px;font-weight:700;
+  background:rgba(240,250,255,.97);border:1px solid rgba(80,150,220,.40);color:#0d2a4a;
+  box-shadow:0 8px 24px rgba(80,140,220,.20);
+  opacity:0;transform:translateX(20px);transition:all .25s;max-width:300px;
+  font-family:'Baloo 2','Baloo Thai 2',sans-serif !important;
+}
+.toast.show{opacity:1;transform:translateX(0);}
+.toast.success{border-color:#0a9e6e;background:rgba(220,255,240,.97);color:#064a30;}
+.toast.error{border-color:#d94040;background:rgba(255,230,230,.97);color:#7a0000;}
+.toast.warn{border-color:#c49000;background:rgba(255,248,210,.97);color:#6a4000;}
+
+/* ── EMPTY ── */
+.empty{text-align:center;padding:52px 20px;color:#3a6080;}
+.empty-icon{font-size:42px;margin-bottom:12px;opacity:.75;}
+.empty-text{font-size:13px;font-weight:600;line-height:1.8;}
+
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:rgba(200,230,255,.20);}
+::-webkit-scrollbar-thumb{background:rgba(80,140,220,.35);border-radius:10px;}
+
+@media(max-width:900px){.jobs-wrap{grid-template-columns:1fr;}.metrics{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:600px){.app{padding:12px 14px;}.metrics{grid-template-columns:1fr 1fr;}}
+</style>
+</head>
+<body>
+
+<canvas id="star-canvas" style="position:fixed;inset:0;pointer-events:none;z-index:0;"></canvas>
+
+<!-- CUTE SPACE ICONS -->
+<div class="deco d-moon">🌙</div>
+<div class="deco d-ufo">🛸</div>
+<div class="deco d-rocket1">🚀</div>
+<div class="deco d-rocket2" style="transform:rotate(30deg);">🚀</div>
+<div class="deco d-planet1">🪐</div>
+<div class="deco d-planet2">🌍</div>
+<div class="deco d-alien">👾</div>
+<div class="deco d-comet">☄️</div>
+<div class="deco d-star1">⭐</div>
+<div class="deco d-star2">✦</div>
+<div class="deco d-star3">✦</div>
+<div class="deco d-star4">⭐</div>
+
+<div class="app">
+  <div class="header">
+    <div class="header-left">
+      <div class="logo-wrap">⚖️</div>
+      <div><div class="header-title">Price Comparison</div></div>
+    </div>
+    <div class="header-right">
+      <button class="btn btn-primary" onclick="showAddJob()">＋ สร้างงานเปรียบเทียบ</button>
+    </div>
+  </div>
+
+  <div class="metrics">
+    <div class="metric m-blue"><div class="metric-icon-wrap">📋</div><div><div class="metric-num" id="m-jobs">0</div><div class="metric-label">งานทั้งหมด</div></div></div>
+    <div class="metric m-yellow"><div class="metric-icon-wrap">⏳</div><div><div class="metric-num" id="m-pending">0</div><div class="metric-label">รอเปรียบเทียบ</div></div></div>
+    <div class="metric m-green"><div class="metric-icon-wrap">✅</div><div><div class="metric-num" id="m-done">0</div><div class="metric-label">เสร็จแล้ว</div></div></div>
+    <div class="metric m-pink"><div class="metric-icon-wrap">🤝</div><div><div class="metric-num" id="m-sups">0</div><div class="metric-label">Supplier ทั้งหมด</div></div></div>
+  </div>
+
+  <div class="jobs-wrap">
+    <div class="jobs-panel">
+      <div class="jobs-panel-header">
+        <div class="jobs-panel-title">📁 รายการงาน</div>
+        <div class="jobs-panel-count" id="jobs-count">0 งาน</div>
+      </div>
+      <div class="jobs-list" id="jobs-list">
+        <div class="empty"><div class="empty-icon">🌙</div><div class="empty-text">ยังไม่มีงาน<br>กด + สร้างงาน</div></div>
+      </div>
+    </div>
+    <div class="compare-panel-wrap" id="compare-panel-wrap">
+      <div class="empty" style="padding:80px 20px;">
+        <div class="empty-icon">⭐</div>
+        <div class="empty-text">เลือกงานจากรายการด้านซ้าย<br>เพื่อดูตารางเปรียบเทียบ</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Add Job -->
+<div class="modal-overlay" id="modal-add-job">
+  <div class="modal" style="max-width:650px;">
+    <div class="modal-header">
+      <div class="modal-title" id="add-job-modal-title">📋 สร้างงานใหม่ — ขั้นตอน 1/2</div>
+      <button class="btn btn-icon btn-ghost btn-sm" onclick="closeModal('modal-add-job')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="job-step1">
+        <div class="form-grid-2">
+          <div class="form-group"><label class="form-label">📌 ชื่องาน *</label><input class="form-input" id="j-name" placeholder="เช่น จัดซื้อ Chiller ตึก A"></div>
+          <div class="form-group"><label class="form-label">📁 PR Number</label><input class="form-input" id="j-pr" placeholder="PR-2568-XXXX"></div>
+        </div>
+        <div class="form-grid-2">
+          <div class="form-group"><label class="form-label">👤 ผู้ขอ / แผนก</label><input class="form-input" id="j-user" placeholder="แผนก / ชื่อ"></div>
+          <div class="form-group"><label class="form-label">📅 วันที่</label><input class="form-input" type="date" id="j-date"></div>
+        </div>
+        <div class="form-group"><label class="form-label">📝 รายละเอียด</label><textarea class="form-textarea" id="j-detail" placeholder="รายละเอียด..." rows="2"></textarea></div>
+        <div style="margin-top:10px;">
+          <div class="form-label" style="display:block;margin-bottom:10px;">🏭 Supplier</div>
+          <div id="supplier-inputs">
+            <div class="sup-input-row" style="display:flex;gap:8px;margin-bottom:8px;"><input class="form-input" placeholder="ชื่อ Supplier 1" style="flex:1;"><button class="btn btn-ghost btn-sm" onclick="removeSup(this)">✕</button></div>
+            <div class="sup-input-row" style="display:flex;gap:8px;margin-bottom:8px;"><input class="form-input" placeholder="ชื่อ Supplier 2" style="flex:1;"><button class="btn btn-ghost btn-sm" onclick="removeSup(this)">✕</button></div>
+            <div class="sup-input-row" style="display:flex;gap:8px;margin-bottom:8px;"><input class="form-input" placeholder="ชื่อ Supplier 3" style="flex:1;"><button class="btn btn-ghost btn-sm" onclick="removeSup(this)">✕</button></div>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="addSupInput()">＋ เพิ่ม Supplier</button>
+        </div>
+      </div>
+      <div id="job-step2" style="display:none;">
+        <div class="form-label" style="display:block;margin-bottom:10px;">📦 รายการสินค้า + ราคาแต่ละ Supplier</div>
+        <div style="overflow-x:auto;border-radius:var(--r);border:1px solid var(--border);">
+          <table class="items-table" id="items-price-table" style="min-width:500px;">
+            <thead id="items-price-thead"></thead>
+            <tbody id="items-price-tbody"></tbody>
+          </table>
+        </div>
+        <div class="add-item-row" style="margin-top:8px;">
+          <button class="btn btn-ghost btn-sm" onclick="addPriceRow()">＋ เพิ่มรายการสินค้า</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-add-job')">ยกเลิก</button>
+      <button class="btn btn-ghost" id="j-btn-back" onclick="jobStepBack()" style="display:none;">← ย้อนกลับ</button>
+      <button class="btn btn-primary" id="j-btn-next" onclick="jobStepNext()">ถัดไป →</button>
+      <button class="btn btn-success" id="j-btn-save" onclick="saveJob()" style="display:none;">💾 สร้างงาน</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-prices">
+  <div class="modal" style="max-width:500px;">
+    <div class="modal-header">
+      <div class="modal-title" id="price-modal-title">💰 กรอกราคา</div>
+      <button class="btn btn-icon btn-ghost btn-sm" onclick="closeModal('modal-prices')">✕</button>
+    </div>
+    <div class="modal-body" id="price-modal-body"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-prices')">ยกเลิก</button>
+      <button class="btn btn-primary" onclick="savePrices()">💾 บันทึกราคา</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-edit-job">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">✏️ แก้ไขงาน</div>
+      <button class="btn btn-icon btn-ghost btn-sm" onclick="closeModal('modal-edit-job')">✕</button>
+    </div>
+    <div class="modal-body" id="edit-job-body"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-edit-job')">ยกเลิก</button>
+      <button class="btn btn-primary" onclick="saveEditJob()">💾 บันทึก</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toasts"></div>
+
+<script>
+/* ── STAR CANVAS ── */
+(function(){
+  var c=document.getElementById('star-canvas');
+  var ctx=c.getContext('2d');
+  function resize(){c.width=window.innerWidth;c.height=window.innerHeight;}
+  resize();window.addEventListener('resize',resize);
+
+  /* tiny space style: white dots + yellow stars + colored glows */
+  var items=[];
+  /* soft blue dots — pastel sky bubbles */
+  for(var i=0;i<180;i++){
+    items.push({type:'dot',x:Math.random()*4000,y:Math.random()*3000,
+      r:Math.random()*1.2+0.3,t:Math.random()*Math.PI*2,
+      speed:Math.random()*0.4+0.1,op:Math.random()*.30+.08,
+      col:'80,150,220'});
+  }
+  /* gold sparkle dots */
+  for(var g=0;g<30;g++){
+    items.push({type:'dot',x:Math.random()*4000,y:Math.random()*3000,
+      r:Math.random()*1.4+0.5,t:Math.random()*Math.PI*2,
+      speed:Math.random()*0.5+0.12,op:Math.random()*.25+.10,
+      col:'200,160,0'});
+  }
+  /* 4-point star sparkles */
+  for(var s4=0;s4<22;s4++){
+    items.push({type:'star4',x:Math.random()*4000,y:Math.random()*3000,
+      r:Math.random()*4+2,t:Math.random()*Math.PI*2,
+      speed:Math.random()*0.35+0.08,op:.35,
+      col:['80,150,220','200,160,0','100,170,240'][Math.floor(Math.random()*3)]});
+  }
+  /* soft glow patches */
+  var ncols=['180,220,255','255,240,140','200,230,255','255,230,120'];
+  for(var n=0;n<10;n++){
+    items.push({type:'nebula',x:Math.random()*4000,y:Math.random()*3000,
+      r:Math.random()*60+30,t:Math.random()*Math.PI*2,
+      speed:Math.random()*0.05+0.01,op:.08,
+      col:ncols[Math.floor(Math.random()*ncols.length)]});
+  }
+
+  function drawStar4(ctx,x,y,r,op,col){
+    /* 4-point cross sparkle */
+    ctx.save();ctx.globalAlpha=op;
+    ctx.fillStyle='rgba('+col+',1)';
+    for(var a=0;a<4;a++){
+      ctx.save();ctx.translate(x,y);ctx.rotate(a*Math.PI/2);
+      ctx.beginPath();
+      ctx.moveTo(0,-r);ctx.quadraticCurveTo(r*.18,0,0,0);
+      ctx.quadraticCurveTo(-r*.18,0,0,-r);
+      ctx.fill();ctx.restore();
+    }
+    ctx.restore();
+  }
+
+
+
+  function draw(){
+    ctx.clearRect(0,0,c.width,c.height);
+    var now=Date.now()/1000;
+    items.forEach(function(s){
+      s.t+=s.speed*0.016;
+      var op=s.type==='star5'||s.type==='crescent'
+        ? Math.max(.25,s.op*(0.6+0.4*Math.abs(Math.sin(s.t))))
+        : s.op*(0.35+0.65*Math.abs(Math.sin(s.t)));
+      var sx=s.x%c.width, sy=s.y%c.height;
+      if(s.type==='dot'){
+        ctx.beginPath();ctx.arc(sx,sy,s.r,0,Math.PI*2);
+        ctx.fillStyle='rgba('+s.col+','+op+')';ctx.fill();
+      } else if(s.type==='star4'){
+        drawStar4(ctx,sx,sy,s.r,op,s.col);
+      } else if(s.type==='nebula'){
+        var gn=ctx.createRadialGradient(sx,sy,0,sx,sy,s.r);
+        gn.addColorStop(0,'rgba('+s.col+','+op+')');
+        gn.addColorStop(0.5,'rgba('+s.col+','+(op*.4)+')');
+        gn.addColorStop(1,'rgba('+s.col+',0)');
+        ctx.beginPath();ctx.arc(sx,sy,s.r,0,Math.PI*2);
+        ctx.fillStyle=gn;ctx.fill();
+      }
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+</script>
+
+<script>
+
+
+
+
+
+// ══════════════════════════════
+// CONFIG
+// ══════════════════════════════
+var GAS_URL = 'YOUR_GAS_URL_HERE'; // ← ใส่ URL Apps Script ที่นี่
+
+// ══════════════════════════════
+// DATA
+// ══════════════════════════════
+var jobs = [];
+var nextJobId = 1;
+
+function gasCall(params, cb){
+  if(!GAS_URL || GAS_URL === 'YOUR_GAS_URL_HERE'){
+    cb('no url', null); return;
+  }
+  var url = GAS_URL + '?' + Object.keys(params).map(function(k){
+    return encodeURIComponent(k)+'='+encodeURIComponent(params[k]);
+  }).join('&');
+  fetch(url).then(function(r){return r.json();})
+    .then(function(d){cb(null,d);})
+    .catch(function(e){cb(e,null);});
+}
+
+function saveLocal(){ try{ localStorage.setItem('priceCompareJobs', JSON.stringify(jobs)); localStorage.setItem('priceCompareNextId', String(nextJobId)); }catch(e){} }
+function loadLocal(){
+  try{
+    var j = localStorage.getItem('priceCompareJobs');
+    if(j){
+      jobs = JSON.parse(j);
+      // ensure nested fields are proper objects
+      jobs = jobs.map(function(jb){
+        if(typeof jb.suppliers === 'string'){ try{ jb.suppliers=JSON.parse(jb.suppliers); }catch(e){ jb.suppliers=[]; } }
+        if(typeof jb.items === 'string'){ try{ jb.items=JSON.parse(jb.items); }catch(e){ jb.items=[]; } }
+        if(typeof jb.prices === 'string'){ try{ jb.prices=JSON.parse(jb.prices); }catch(e){ jb.prices={}; } }
+        if(!jb.prices || typeof jb.prices !== 'object') jb.prices = {};
+        if(!jb.suppliers || !Array.isArray(jb.suppliers)) jb.suppliers = [];
+        if(!jb.items || !Array.isArray(jb.items)) jb.items = [];
+        // ensure each supplier price entry is object, not string
+        Object.keys(jb.prices).forEach(function(sup){
+          if(typeof jb.prices[sup] === 'string'){
+            try{ jb.prices[sup] = JSON.parse(jb.prices[sup]); }catch(e){ jb.prices[sup]={}; }
+          }
+        });
+        return jb;
+      });
+    }
+    var n = localStorage.getItem('priceCompareNextId');
+    if(n){ nextJobId = Number(n)||1; }
+    var maxId = 0;
+    jobs.forEach(function(jb){ if(Number(jb.id)>maxId) maxId=Number(jb.id); });
+    if(maxId >= nextJobId) nextJobId = maxId+1;
+  }catch(e){ jobs=[]; }
+}
+function syncJobToSheet(job){
+  gasCall({ action:'saveCompare', data:JSON.stringify(job) }, function(err){
+    if(err) console.warn('sync error',err);
+  });
+}
+function loadFromSheet(cb){
+  gasCall({ action:'getCompares' }, function(err, data){
+    if(!err && Array.isArray(data) && data.length){
+      jobs = data.map(function(j){
+        j.id = Number(j.id)||j.id;
+        if(typeof j.suppliers === 'string'){ try{ j.suppliers=JSON.parse(j.suppliers); }catch(e){ j.suppliers=[]; } }
+        if(typeof j.items === 'string'){ try{ j.items=JSON.parse(j.items); }catch(e){ j.items=[]; } }
+        if(typeof j.prices === 'string'){ try{ j.prices=JSON.parse(j.prices); }catch(e){ j.prices={}; } }
+        return j;
+      });
+      var maxId = 0;
+      jobs.forEach(function(jb){ if(Number(jb.id)>maxId) maxId=Number(jb.id); });
+      if(maxId >= nextJobId) nextJobId = maxId+1;
+      saveLocal();
+    }
+    cb();
+  });
+}
+
+// ══════════════════════════════
+// SUPPLIER COLORS
+// ══════════════════════════════
+var SUP_COLORS = ['#7dd3fc','#f9a8d4','#86efac','#c4b5fd','#fde68a','#6ee7b7','#fdba74','#a5f3fc'];
+
+// ══════════════════════════════
+// MODALS
+// ══════════════════════════════
+function closeModal(id){ 
+  var el = document.getElementById(id); 
+  if(el) el.classList.remove('open'); 
+}
+// Use document-level delegation so all modals (even those after script tag) work
+document.addEventListener('click', function(e){
+  if(e.target && e.target.classList && e.target.classList.contains('modal-overlay')){
+    e.target.classList.remove('open');
+  }
+});
+
+// ══════════════════════════════
+// TOAST
+// ══════════════════════════════
+function toast(msg, type){
+  var c = document.getElementById('toasts'), t = document.createElement('div');
+  t.className='toast '+(type||''); t.textContent=msg; c.appendChild(t);
+  setTimeout(function(){ t.classList.add('show'); }, 10);
+  setTimeout(function(){ t.classList.remove('show'); setTimeout(function(){ t.remove(); },300); }, 3000);
+}
+
+// ══════════════════════════════
+// ADD JOB MODAL HELPERS
+// ══════════════════════════════
+function addSupInput(){
+  var wrap = document.getElementById('supplier-inputs');
+  if(!wrap) return;
+  var idx = wrap.querySelectorAll('.sup-input-row').length + 1;
+  var row = document.createElement('div');
+  row.className = 'sup-input-row';
+  row.style.cssText = 'display:flex;gap:8px;margin-bottom:8px;';
+  row.innerHTML = '<input class="form-input" placeholder="ชื่อ Supplier '+idx+'" style="flex:1;"><button class="btn btn-ghost btn-sm" onclick="removeSup(this)">✕</button>';
+  wrap.appendChild(row);
+}
+function removeSup(btn){ var row=btn.closest('.sup-input-row'); if(row) row.remove(); }
+
+function addItemRow(){ /* legacy */ }
+function removeItem(btn){ var tr=btn.closest('tr'); if(tr) tr.remove(); }
+
+// ── Step navigation ──
+var _jobSuppliers = [];
+
+function showAddJob(){
+  ['j-name','j-pr','j-user','j-detail'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
+  document.getElementById('j-date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('supplier-inputs').innerHTML = [1,2,3].map(function(i){
+    return '<div class="sup-input-row" style="display:flex;gap:8px;margin-bottom:8px;"><input class="form-input" placeholder="ชื่อ Supplier '+i+'" style="flex:1;"><button class="btn btn-ghost btn-sm" onclick="removeSup(this)">✕</button></div>';
+  }).join('');
+  // show step1, hide step2
+  document.getElementById('job-step1').style.display='';
+  document.getElementById('job-step2').style.display='none';
+  document.getElementById('j-btn-next').style.display='';
+  document.getElementById('j-btn-save').style.display='none';
+  document.getElementById('j-btn-back').style.display='none';
+  document.getElementById('modal-add-job').classList.add('open');
+}
+
+function jobStepNext(){
+  var name = document.getElementById('j-name').value.trim();
+  if(!name){ toast('กรุณาใส่ชื่องาน','error'); return; }
+  _jobSuppliers = [];
+  document.querySelectorAll('#supplier-inputs .sup-input-row input').forEach(function(inp){
+    var v = inp.value.trim(); if(v) _jobSuppliers.push(v);
+  });
+  if(_jobSuppliers.length < 1){ toast('กรุณาใส่ Supplier อย่างน้อย 1 เจ้า','error'); return; }
+  buildPriceTable(_jobSuppliers);
+  document.getElementById('job-step1').style.display='none';
+  document.getElementById('job-step2').style.display='';
+  document.getElementById('j-btn-next').style.display='none';
+  document.getElementById('j-btn-save').style.display='';
+  document.getElementById('j-btn-back').style.display='';
+}
+
+function jobStepBack(){
+  document.getElementById('job-step1').style.display='';
+  document.getElementById('job-step2').style.display='none';
+  document.getElementById('j-btn-next').style.display='';
+  document.getElementById('j-btn-save').style.display='none';
+  document.getElementById('j-btn-back').style.display='none';
+}
+
+function buildPriceTable(sups){
+  var colors = SUP_COLORS;
+  // Header
+  var thead = document.getElementById('items-price-thead');
+  var th = '<tr><th style="min-width:160px;">ชื่อสินค้า</th><th style="width:70px;">จำนวน</th><th style="width:70px;">หน่วย</th>';
+  sups.forEach(function(sup, si){
+    var c = colors[si % colors.length];
+    th += '<th style="min-width:110px;color:'+c+';text-align:right;">'+sup+'<br><span style="font-size:10px;opacity:.7;">ราคา/หน่วย</span></th>';
+  });
+  th += '<th style="width:36px;"></th></tr>';
+  thead.innerHTML = th;
+  // Body — keep existing rows if any, else add 2 default rows
+  var tbody = document.getElementById('items-price-tbody');
+  if(!tbody.children.length){
+    addPriceRow(); addPriceRow();
+  } else {
+    // rebuild price cells for existing rows
+    Array.from(tbody.querySelectorAll('tr')).forEach(function(tr){
+      rebuildPriceCells(tr, sups);
+    });
+  }
+}
+
+function addPriceRow(){
+  var tbody = document.getElementById('items-price-tbody');
+  var sups = _jobSuppliers;
+  var tr = document.createElement('tr');
+  var cells = '<td><input class="item-name-inp" placeholder="ชื่อสินค้า" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:6px;color:#fff;font-family:inherit;font-size:12px;font-weight:600;padding:5px 8px;width:100%;"></td>';
+  cells += '<td><input class="item-qty-inp" type="number" value="1" min="1" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:6px;color:#fff;font-family:inherit;font-size:12px;font-weight:700;padding:5px 8px;width:100%;text-align:center;"></td>';
+  cells += '<td><input class="item-unit-inp" placeholder="ชุด" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:6px;color:#fff;font-family:inherit;font-size:12px;font-weight:600;padding:5px 8px;width:100%;"></td>';
+  sups.forEach(function(sup, si){
+    var c = SUP_COLORS[si % SUP_COLORS.length];
+    cells += '<td><input class="item-price-inp" data-sup="'+si+'" type="number" placeholder="0" min="0" step="0.01" style="background:rgba(255,255,255,.06);border:1px solid '+c+'44;border-radius:6px;color:'+c+';font-family:inherit;font-size:12px;font-weight:700;padding:5px 8px;width:100%;text-align:right;"></td>';
+  });
+  cells += '<td><button class="btn btn-ghost btn-sm" onclick="removeParentRow(this)" style="padding:4px 8px;">✕</button></td>';
+  tr.innerHTML = cells;
+  tbody.appendChild(tr);
+}
+
+function rebuildPriceCells(tr, sups){}
+function removeParentRow(btn){ var tr=btn.closest("tr"); if(tr) tr.remove(); }
+
+function saveJob(){
+  var name = document.getElementById('j-name').value.trim();
+  if(!name){ toast('กรุณาใส่ชื่องาน','error'); return; }
+  var sups = _jobSuppliers;
+  if(!sups || sups.length < 1){ toast('กรุณาใส่ Supplier อย่างน้อย 1 เจ้า','error'); return; }
+
+  var items = [];
+  var prices = {};
+  sups.forEach(function(s){ prices[s] = {}; });
+
+  document.querySelectorAll('#items-price-tbody tr').forEach(function(tr, rowIdx){
+    var nm = tr.querySelector('.item-name-inp') ? tr.querySelector('.item-name-inp').value.trim() : '';
+    var qty = tr.querySelector('.item-qty-inp') ? Number(tr.querySelector('.item-qty-inp').value)||1 : 1;
+    var unit = tr.querySelector('.item-unit-inp') ? tr.querySelector('.item-unit-inp').value.trim()||'ชุด' : 'ชุด';
+    if(!nm) return;
+    var itemIdx = items.length;
+    items.push({ name:nm, qty:qty, unit:unit });
+    tr.querySelectorAll('.item-price-inp').forEach(function(inp){
+      var si = Number(inp.dataset.sup);
+      var sup = sups[si];
+      if(sup !== undefined){
+        prices[sup][itemIdx] = parseFloat(inp.value) || 0;
+      }
+    });
+  });
+
+  if(items.length < 1){ toast('กรุณาใส่รายการสินค้าอย่างน้อย 1 รายการ','error'); return; }
+
+  var job = {
+    id: nextJobId++,
+    name: name,
+    pr: document.getElementById('j-pr').value.trim(),
+    user: document.getElementById('j-user').value.trim(),
+    date: document.getElementById('j-date').value,
+    detail: document.getElementById('j-detail').value.trim(),
+    suppliers: sups,
+    items: items,
+    prices: JSON.parse(JSON.stringify(prices)),
+    status: 'pending',
+    winner: ''
+  };
+  autoSetWinner(job);
+  jobs.unshift(job);
+  saveLocal();
+  syncJobToSheet(job);
+  closeModal('modal-add-job');
+  toast('✅ สร้างงาน "'+name+'" แล้ว','success');
+  renderAll();
+  selectJob(job.id);
+}
+
+// ══════════════════════════════
+// SELECT JOB → SHOW COMPARE
+// ══════════════════════════════
+var selectedJobId = null;
+
+function selectJob(id){
+  selectedJobId = id;
+  document.querySelectorAll('.job-item').forEach(function(el){
+    el.classList.toggle('active', el.dataset.id == id);
+  });
+  renderCompare();
+}
+
+// ══════════════════════════════
+// PRICE ENTRY MODAL
+// ══════════════════════════════
+var _editingSupplier = null;
+var _editingJobId = null;
+
+function openPrices(jobId, supName){
+  var job = jobs.find(function(j){ return j.id == jobId; });
+  if(!job) return;
+  _editingSupplier = supName;
+  _editingJobId = jobId;
+  // ensure prices is proper object
+  if(!job.prices || typeof job.prices !== 'object') job.prices = {};
+  if(typeof job.prices[supName] === 'string'){
+    try{ job.prices[supName] = JSON.parse(job.prices[supName]); }catch(e){ job.prices[supName]={}; }
+  }
+  var supIdx = job.suppliers.indexOf(supName);
+  var color = SUP_COLORS[supIdx % SUP_COLORS.length];
+  document.getElementById('price-modal-title').innerHTML =
+    '<span style="color:'+color+'">💰 กรอกราคา — '+supName+'</span>';
+  var prices = (job.prices && job.prices[supName]) || {};
+  var html = '<div style="font-size:12px;color:var(--text3);margin-bottom:12px;">กรอกราคาต่อหน่วยสำหรับแต่ละรายการ (ก่อน VAT)</div>';
+  html += '<div class="items-table-wrap"><table class="items-table"><thead><tr><th>รายการสินค้า</th><th>จำนวน</th><th>หน่วย</th><th>ราคา/หน่วย (บาท)</th></tr></thead><tbody>';
+  job.items.forEach(function(item, idx){
+    var price = prices[idx] !== undefined ? prices[idx] : '';
+    html += '<tr><td style="font-weight:700;color:#fff;">'+item.name+'</td>';
+    html += '<td style="color:var(--text2);">'+item.qty+'</td>';
+    html += '<td style="color:var(--text2);">'+item.unit+'</td>';
+    html += '<td><input type="number" class="price-inp" data-idx="'+idx+'" placeholder="0.00" value="'+price+'" min="0" step="0.01" style="text-align:right;"></td></tr>';
+  });
+  html += '</tbody></table></div>';
+  document.getElementById('price-modal-body').innerHTML = html;
+  document.getElementById('modal-prices').classList.add('open');
+}
+
+function savePrices(){
+  var job = jobs.find(function(j){ return j.id == _editingJobId; });
+  if(!job) return;
+  // ensure prices is a proper plain object (not string)
+  if(!job.prices || typeof job.prices !== 'object') job.prices = {};
+  // initialize supplier entry fresh
+  var supPrices = {};
+  document.querySelectorAll('.price-inp').forEach(function(inp){
+    var idx = Number(inp.dataset.idx);
+    var val = parseFloat(inp.value) || 0;
+    supPrices[idx] = val;
+  });
+  // assign back — do NOT wipe other suppliers
+  job.prices[_editingSupplier] = supPrices;
+  // deep-clone to avoid reference issues
+  job.prices = JSON.parse(JSON.stringify(job.prices));
+  autoSetWinner(job);
+  saveLocal();
+  syncJobToSheet(job);
+  closeModal('modal-prices');
+  toast('💰 บันทึกราคา "'+_editingSupplier+'" แล้ว','success');
+  renderAll();
+  renderCompare();
+}
+
+function autoSetWinner(job){
+  if(!job.suppliers || !job.prices) return;
+  var totals = {};
+  job.suppliers.forEach(function(sup){
+    var prices = job.prices[sup] || {};
+    var total = 0;
+    job.items.forEach(function(item, idx){
+      total += (Number(prices[idx])||0) * item.qty;
+    });
+    totals[sup] = total;
+  });
+  var minSup = null, minVal = Infinity;
+  Object.keys(totals).forEach(function(sup){
+    if(totals[sup] > 0 && totals[sup] < minVal){ minVal=totals[sup]; minSup=sup; }
+  });
+  job.winner = minSup || '';
+  // update status
+  var filledCount = job.suppliers.filter(function(s){ return job.prices[s] && Object.keys(job.prices[s]).length > 0; }).length;
+  if(filledCount === job.suppliers.length) job.status = 'done';
+  else if(filledCount > 0) job.status = 'inprog';
+  else job.status = 'pending';
+}
+
+// ══════════════════════════════
+// RENDER JOBS LIST
+// ══════════════════════════════
+function renderJobs(){
+  var el = document.getElementById('jobs-list');
+  var cnt = document.getElementById('jobs-count');
+  if(cnt) cnt.textContent = jobs.length + ' งาน';
+  if(!jobs.length){
+    el.innerHTML = '<div class="empty"><div class="empty-icon">📭</div><div class="empty-text">ยังไม่มีงาน<br>กด "สร้างงานเปรียบเทียบ" เพื่อเริ่มต้น</div></div>';
+    return;
+  }
+  el.innerHTML = jobs.map(function(job){
+    var filled = job.suppliers.filter(function(s){ return job.prices && job.prices[s] && Object.keys(job.prices[s]).length>0; }).length;
+    var statusBadge = job.status==='done'
+      ? '<span class="job-badge badge-green">✅ เสร็จ</span>'
+      : job.status==='inprog'
+      ? '<span class="job-badge badge-sky">🔄 กำลังกรอก</span>'
+      : '<span class="job-badge badge-gold">⏳ รอกรอกราคา</span>';
+    var winnerTxt = job.winner ? '🏆 '+job.winner : '';
+    return '<div class="job-item" data-id="'+job.id+'" onclick="selectJob('+job.id+')">'
+      +'<div class="job-name">'+job.name+'</div>'
+      +'<div class="job-meta">'
+      +(job.pr?'<span>'+job.pr+'</span>':'')
+      +'<span>'+job.suppliers.length+' Supplier</span>'
+      +'<span>'+job.items.length+' รายการ</span>'
+      +'</div>'
+      +'<div style="display:flex;align-items:center;gap:6px;margin-top:6px;flex-wrap:wrap;">'
+      +statusBadge
+      +(winnerTxt?'<span class="job-badge badge-gold">'+winnerTxt+'</span>':'')
+      +'</div>'
+      +'</div>';
+  }).join('');
+}
+
+// ══════════════════════════════
+// RENDER COMPARE TABLE
+// ══════════════════════════════
+function renderCompare(){
+  var panel = document.getElementById('compare-panel-wrap');
+  if(!selectedJobId){
+    panel.innerHTML = '<div class="empty" style="padding:80px 20px;"><div class="empty-icon">⚖️</div><div class="empty-text">เลือกงานจากรายการด้านซ้าย<br>เพื่อดูตารางเปรียบเทียบ</div></div>';
+    return;
+  }
+  var job = jobs.find(function(j){ return j.id == selectedJobId; });
+  if(!job){ panel.innerHTML=''; return; }
+
+  // calc totals per supplier
+  var supTotals = {};
+  job.suppliers.forEach(function(sup){
+    var prices = (job.prices && job.prices[sup]) || {};
+    var total = 0;
+    job.items.forEach(function(item, idx){
+      total += (Number(prices[idx])||0) * item.qty;
+    });
+    supTotals[sup] = total;
+  });
+
+  // find winner
+  var winnerSup = '';
+  var minTotal = Infinity;
+  Object.keys(supTotals).forEach(function(sup){
+    if(supTotals[sup] > 0 && supTotals[sup] < minTotal){ minTotal=supTotals[sup]; winnerSup=sup; }
+  });
+
+  // selected suppliers for comparison (default all)
+  if(!job._selSups) job._selSups = job.suppliers.slice();
+  var selSups = job._selSups.filter(function(s){ return job.suppliers.indexOf(s)>=0; });
+  if(!selSups.length) selSups = job.suppliers.slice();
+
+  // calc for selected sups
+  var selTotals = {};
+  selSups.forEach(function(sup){
+    var prices = (job.prices && job.prices[sup]) || {};
+    var total = 0;
+    job.items.forEach(function(item, idx){
+      total += (Number(prices[idx])||0) * item.qty;
+    });
+    selTotals[sup] = total;
+  });
+  var selWinner = '';
+  var selMin = Infinity;
+  Object.keys(selTotals).forEach(function(sup){
+    if(selTotals[sup] > 0 && selTotals[sup] < selMin){ selMin=selTotals[sup]; selWinner=sup; }
+  });
+
+  var VAT = 0.07;
+
+  // Build HTML
+  var html = '';
+
+  // Top
+  html += '<div class="compare-top">';
+  html += '<div><div class="compare-title">⚖️ '+job.name+'</div>';
+  html += '<div class="compare-sub">'+(job.pr?'PR: '+job.pr+' · ':'')+job.suppliers.length+' Supplier · '+job.items.length+' รายการ'+(job.user?' · 👤 '+job.user:'')+'</div></div>';
+  html += '<div style="display:flex;gap:8px;flex-wrap:wrap;">';
+  html += '<button class="btn btn-ghost btn-sm" onclick="openEditJob('+job.id+')">✏️ แก้ไข</button>';
+  html += '<button class="btn btn-gold btn-sm" onclick="exportPDF('+job.id+')">📄 Export PDF</button>';
+  html += '<button class="btn btn-danger btn-sm" onclick="deleteJob('+job.id+')">🗑️ ลบ</button>';
+  html += '</div></div>';
+
+  // Supplier selector chips
+  html += '<div class="selector-panel">';
+  html += '<div class="selector-label">🔍 เปรียบเทียบ:</div>';
+  html += '<div class="sup-chips">';
+  job.suppliers.forEach(function(sup, si){
+    var color = SUP_COLORS[si % SUP_COLORS.length];
+    var isSel = job._selSups && job._selSups.indexOf(sup) >= 0;
+    var isWin = sup === winnerSup;
+    html += '<div class="sup-chip '+(isSel?'sel':'')+(isWin?' winner-chip':'')+'" onclick="toggleSupSel('+job.id+',\''+sup+'\')">'
+      +'<span class="sup-dot" style="background:'+color+';"></span>'+sup+(isWin?' 🏆':'')+'</div>';
+  });
+  html += '<button class="btn btn-ghost btn-sm" onclick="selAllSups('+job.id+')" style="flex-shrink:0;">เลือกทั้งหมด</button>';
+  html += '</div>';
+  html += '</div>';
+
+  // Price entry buttons
+  html += '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;margin-bottom:14px;">';
+  job.suppliers.forEach(function(sup, si){
+    var color = SUP_COLORS[si % SUP_COLORS.length];
+    var hasPrices = job.prices && job.prices[sup] && Object.keys(job.prices[sup]).length > 0;
+    html += '<button class="btn btn-sm" style="background:rgba(255,255,255,0.08);border:1.5px solid '+color+'44;color:'+color+';" onclick="openPrices('+job.id+',\''+sup+'\')">'
+      +(hasPrices?'✏️':'＋')+' '+sup+'</button>';
+  });
+  html += '</div>';
+
+  // TABLE
+  html += '<div class="table-wrap"><table>';
+
+  // Header row
+  html += '<thead><tr><th style="width:35%;text-align:left;">รายการสินค้า</th><th style="width:9%;text-align:center;">จำนวน</th><th style="width:9%;text-align:center;">หน่วย</th>';
+  selSups.forEach(function(sup, si){
+    var origIdx = job.suppliers.indexOf(sup);
+    var color = SUP_COLORS[origIdx % SUP_COLORS.length];
+    var isWin = sup === selWinner;
+    html += '<th style="color:'+color+';min-width:110px;text-align:center;">'
+      +(isWin?'🏆 ':'')+sup+'<br><span style="font-size:10px;font-weight:600;opacity:.6;">ราคา/หน่วย</span></th>';
+  });
+  html += '</tr></thead><tbody>';
+
+  // Item rows
+  job.items.forEach(function(item, idx){
+    // find min price among selected sups (before VAT per unit)
+    var minPrice = Infinity;
+    selSups.forEach(function(sup){
+      var p = Number((job.prices && job.prices[sup] && job.prices[sup][idx]) || 0);
+      if(p > 0 && p < minPrice) minPrice = p;
+    });
+
+    html += '<tr><td class="item-name">'+item.name+'</td><td style="text-align:center;color:var(--text3);">'+item.qty+'</td><td style="text-align:center;color:var(--text3);">'+item.unit+'</td>';
+    selSups.forEach(function(sup){
+      var p = Number((job.prices && job.prices[sup] && job.prices[sup][idx]) || 0);
+      var isWin = p > 0 && p === minPrice;
+      html += '<td style="text-align:center;font-weight:700;" class="'+(isWin?'win':'')+'">'+(p?fmt(p):'—')+'</td>';
+    });
+    html += '</tr>';
+  });
+
+  // Subtotal row (before VAT)
+  html += '<tr style="background:rgba(125,211,252,0.05);border-top:2px solid rgba(255,255,255,0.1);">';
+  html += '<td colspan="3" style="font-weight:800;color:var(--text-dark);text-align:left;">รวมก่อน VAT</td>';
+  selSups.forEach(function(sup){
+    var total = selTotals[sup];
+    html += '<td style="text-align:center;font-weight:800;">'+(total>0?fmt(total):'—')+'</td>';
+  });
+  html += '</tr>';
+
+  // Grand Total with VAT row
+  html += '<tr class="row-grand">';
+  html += '<td colspan="3" style="text-align:left;">💰 ราคารวม VAT 7%</td>';
+  selSups.forEach(function(sup){
+    var total = selTotals[sup];
+    var grand = total * (1 + VAT);
+    var isWin = sup === selWinner && total > 0;
+    html += '<td style="text-align:center;" class="'+(isWin?'win':'')+'">'+(grand>0?(isWin?'🏆 ':'')+fmt(grand)+' บาท':'—')+'</td>';
+  });
+  html += '</tr>';
+
+  html += '</tbody></table></div>';
+
+  // SUMMARY
+  if(selWinner && selMin > 0){
+    html += '<div class="summary-card"><div class="summary-title">🏆 สรุปผลการเปรียบเทียบ ('+selSups.length+' Supplier ที่เลือก)</div>';
+    html += '<div class="summary-grid">';
+    // winner box
+    html += '<div class="summary-item winner"><div class="si-label">🥇 Supplier ราคาถูกสุด</div>';
+    html += '<div class="si-value gold">'+selWinner+'</div>';
+    html += '<div class="si-saving">รวม VAT: '+fmt(selMin*(1+VAT))+' บาท</div></div>';
+    // comparison vs others
+    selSups.forEach(function(sup){
+      if(sup === selWinner) return;
+      var t = selTotals[sup];
+      if(t <= 0) return;
+      var diff = t - selMin;
+      var diffVat = diff * (1+VAT);
+      html += '<div class="summary-item"><div class="si-label">📊 '+sup+' vs '+selWinner+'</div>';
+      html += '<div class="si-value sky">'+fmt(t*(1+VAT))+' บาท</div>';
+      html += '<div class="si-saving">แพงกว่า '+fmt(diffVat)+' บาท (รวม VAT)</div></div>';
+    });
+    html += '</div></div>';
+  }
+
+  panel.innerHTML = html;
+}
+
+function toggleSupSel(jobId, sup){
+  var job = jobs.find(function(j){ return j.id==jobId; });
+  if(!job) return;
+  if(!job._selSups) job._selSups = job.suppliers.slice();
+  var idx = job._selSups.indexOf(sup);
+  if(idx>=0){ if(job._selSups.length>1) job._selSups.splice(idx,1); }
+  else job._selSups.push(sup);
+  renderCompare();
+}
+function selAllSups(jobId){
+  var job = jobs.find(function(j){ return j.id==jobId; });
+  if(!job) return;
+  job._selSups = job.suppliers.slice();
+  renderCompare();
+}
+
+// ══════════════════════════════
+// EDIT JOB
+// ══════════════════════════════
+var _editJobId = null;
+function openEditJob(id){
+  var job = jobs.find(function(j){ return j.id==id; });
+  if(!job) return;
+  _editJobId = id;
+  var html = '';
+  html += '<div class="form-grid-2"><div class="form-group"><label class="form-label">📌 ชื่องาน *</label><input class="form-input" id="ej-name" value="'+esc(job.name)+'"></div>';
+  html += '<div class="form-group"><label class="form-label">📁 PR Number</label><input class="form-input" id="ej-pr" value="'+esc(job.pr||'')+'"></div></div>';
+  html += '<div class="form-grid-2"><div class="form-group"><label class="form-label">👤 ผู้ขอ</label><input class="form-input" id="ej-user" value="'+esc(job.user||'')+'"></div>';
+  html += '<div class="form-group"><label class="form-label">📅 วันที่</label><input class="form-input" type="date" id="ej-date" value="'+esc(job.date||'')+'"></div></div>';
+  html += '<div class="form-group"><label class="form-label">📝 รายละเอียด</label><textarea class="form-textarea" id="ej-detail" rows="2">'+esc(job.detail||'')+'</textarea></div>';
+  document.getElementById('edit-job-body').innerHTML = html;
+  document.getElementById('modal-edit-job').classList.add('open');
+}
+function saveEditJob(){
+  var job = jobs.find(function(j){ return j.id==_editJobId; });
+  if(!job) return;
+  var name = document.getElementById('ej-name').value.trim();
+  if(!name){ toast('กรุณาใส่ชื่องาน','error'); return; }
+  job.name = name;
+  job.pr = document.getElementById('ej-pr').value.trim();
+  job.user = document.getElementById('ej-user').value.trim();
+  job.date = document.getElementById('ej-date').value;
+  job.detail = document.getElementById('ej-detail').value.trim();
+  saveLocal(); syncJobToSheet(job);
+  closeModal('modal-edit-job');
+  toast('✅ บันทึกแล้ว','success');
+  renderAll(); renderCompare();
+}
+
+// ══════════════════════════════
+// DELETE JOB
+// ══════════════════════════════
+function deleteJob(id){
+  if(!confirm('ลบงานนี้?')) return;
+  jobs = jobs.filter(function(j){ return j.id!=id; });
+  if(selectedJobId == id) selectedJobId = null;
+  saveLocal();
+  gasCall({ action:'deleteCompare', id:String(id) }, function(){});
+  toast('🗑️ ลบแล้ว','warn');
+  renderAll(); renderCompare();
+}
+
+// ══════════════════════════════
+// EXPORT PDF
+// ══════════════════════════════
+function exportPDF(jobId){
+  var job = jobs.find(function(j){ return j.id==jobId; });
+  if(!job){ toast('ไม่พบงาน','error'); return; }
+
+  var VAT = 0.07;
+  var selSups = (job._selSups && job._selSups.length) ? job._selSups : job.suppliers;
+
+  var supTotals = {};
+  selSups.forEach(function(sup){
+    var prices = (job.prices && job.prices[sup]) || {};
+    var total = 0;
+    job.items.forEach(function(item, idx){ total += (Number(prices[idx])||0) * item.qty; });
+    supTotals[sup] = total;
+  });
+  var winnerSup = ''; var minTotal = Infinity;
+  Object.keys(supTotals).forEach(function(sup){
+    if(supTotals[sup]>0 && supTotals[sup]<minTotal){ minTotal=supTotals[sup]; winnerSup=sup; }
+  });
+
+  var dateStr = new Date().toLocaleDateString('th-TH',{day:'numeric',month:'long',year:'numeric'});
+
+  var html = '<!DOCTYPE html><html lang="th"><head><meta charset="utf-8"><title>เปรียบเทียบราคา</title><style>';
+  html += '@page{size:A4 landscape;margin:8mm;}';
+  html += '*{box-sizing:border-box;}';
+  html += 'body{font-family:Arial,Tahoma,sans-serif;margin:0;background:#fff;color:#111;font-size:12px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}';
+  html += '.sheet{width:100%;padding:0;}';
+  html += 'h1{font-size:20px;font-weight:900;margin:0 0 4px;}';
+  html += '.meta{font-size:11px;color:#555;margin-bottom:12px;}';
+  html += '.line{height:3px;background:linear-gradient(90deg,#1a3a8f,#e91e8c,#f59e0b);border-radius:3px;margin-bottom:14px;}';
+  html += 'table{width:100%;border-collapse:collapse;font-size:11px;}';
+  html += 'th{background:#1a3a8f;color:#fff;padding:8px 10px;text-align:center;font-weight:800;white-space:nowrap;}';
+  html += 'th.left{text-align:left;}';
+  html += 'td{padding:7px 10px;border-bottom:1px solid #e0e0e0;vertical-align:middle;}';
+  html += 'td.num{text-align:right;font-family:monospace;font-weight:700;}';
+  html += 'td.item{font-weight:700;}';
+  html += 'tr:nth-child(even){background:#f8faff;}';
+  html += '.win{background:#fff8e1!important;color:#b45309;font-weight:900;}';
+  html += '.win-sup{background:#1a3a8f!important;color:#fbbf24!important;}';
+  html += '.subtotal td{background:#e8f0fe;font-weight:800;}';
+  html += '.grandtotal td{background:#1a3a8f;color:#fff;font-weight:900;font-size:12px;}';
+  html += '.grandtotal td.win-cell{background:#fbbf24;color:#1a0000;font-size:13px;}';
+  html += '.summary{margin-top:14px;padding:12px 14px;background:#f0f7ff;border:2px solid #1a3a8f;border-radius:8px;}';
+  html += '.sum-title{font-size:13px;font-weight:900;color:#1a3a8f;margin-bottom:8px;}';
+  html += '.sum-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;}';
+  html += '.sum-box{padding:8px 10px;border:1px solid #dde4f0;border-radius:6px;background:#fff;}';
+  html += '.sum-box.win{border-color:#f59e0b;background:#fffde7;}';
+  html += '.sum-lbl{font-size:10px;color:#666;margin-bottom:3px;}';
+  html += '.sum-val{font-size:14px;font-weight:900;color:#1a3a8f;}';
+  html += '.sum-val.gold{color:#b45309;}';
+  html += '.sum-save{font-size:10px;color:#16a34a;font-weight:700;margin-top:2px;}';
+  html += '</style></head><body><div class="sheet">';
+
+  html += '<h1>📊 ตารางเปรียบเทียบราคา</h1>';
+  html += '<div class="meta">งาน: <b>'+job.name+'</b>'+(job.pr?' | PR: '+job.pr:'')+(job.user?' | ผู้ขอ: '+job.user:'')+' | วันที่: '+dateStr+'</div>';
+  html += '<div class="line"></div>';
+
+  // Table
+  html += '<table><thead><tr><th class="left" rowspan="2">รายการสินค้า</th><th rowspan="2">จำนวน</th><th rowspan="2">หน่วย</th>';
+  selSups.forEach(function(sup){
+    var isWin = sup===winnerSup;
+    html += '<th class="'+(isWin?'win-sup':'')+'">'+(isWin?'🏆 ':'')+sup+'</th>';
+  });
+  html += '</thead><tbody>';
+
+  job.items.forEach(function(item, idx){
+    var minP = Infinity;
+    selSups.forEach(function(sup){
+      var p = Number((job.prices&&job.prices[sup]&&job.prices[sup][idx])||0);
+      if(p>0&&p<minP) minP=p;
+    });
+    html += '<tr><td class="item">'+item.name+'</td><td class="num">'+item.qty+'</td><td style="text-align:center;">'+item.unit+'</td>';
+    selSups.forEach(function(sup){
+      var p = Number((job.prices&&job.prices[sup]&&job.prices[sup][idx])||0);
+      var vatU = p*VAT; var rowTotal = (p+vatU)*item.qty;
+      var isWin = p>0&&p===minP;
+      html += '<td class="num '+(isWin?'win':'')+'">'+(p?fmtPDF(p):'—')+'</td>';
+
+    });
+    html += '</tr>';
+  });
+
+  // Subtotal
+  html += '<tr class="subtotal"><td colspan="3">รวมก่อน VAT</td>';
+  selSups.forEach(function(sup){
+    var t = supTotals[sup];
+    var isWin = sup===winnerSup&&t>0;
+    html += '<td class="num">'+(t>0?fmtPDF(t):'—')+'</td>';
+
+  });
+  html += '</tr>';
+
+  // Grand total
+  html += '<tr class="grandtotal"><td colspan="3">💰 ราคารวม VAT ทั้งหมด</td>';
+  selSups.forEach(function(sup){
+    var t = supTotals[sup]; var grand = t*(1+VAT);
+    var isWin = sup===winnerSup&&t>0;
+    html += '<td class="num" style="text-align:right;'+(isWin?'background:#1a3a8f;color:#fff;font-weight:900;':'')+'">'+(grand>0?(isWin?'<span style="background:#fbbf24;color:#1a0000;padding:2px 8px;border-radius:4px;font-weight:900;">🏆 '+fmtPDF(grand)+' บาท</span>':fmtPDF(grand)+' บาท'):'—')+'</td>';
+  });
+  html += '</tr></tbody></table>';
+
+  // Summary
+  if(winnerSup && minTotal>0){
+    html += '<div class="summary"><div class="sum-title">🏆 สรุปผลการเปรียบเทียบ</div><div class="sum-grid">';
+    html += '<div class="sum-box win"><div class="sum-lbl">🥇 Supplier ราคาถูกสุด</div><div class="sum-val gold">'+winnerSup+'</div><div class="sum-save">รวม VAT: '+fmtPDF(minTotal*(1+VAT))+' บาท</div></div>';
+    selSups.forEach(function(sup){
+      if(sup===winnerSup) return;
+      var t = supTotals[sup]; if(t<=0) return;
+      var diff = (t-minTotal)*(1+VAT);
+      html += '<div class="sum-box"><div class="sum-lbl">📊 '+sup+' vs '+winnerSup+'</div><div class="sum-val">'+fmtPDF(t*(1+VAT))+' บาท</div><div class="sum-save">แพงกว่า '+fmtPDF(diff)+' บาท</div></div>';
+    });
+    html += '</div></div>';
+  }
+
+  html += '</div></body></html>';
+
+  var win = window.open('','_blank','width=1100,height=800');
+  if(!win){ toast('เบราว์เซอร์บล็อก popup','warn'); return; }
+  win.document.open(); win.document.write(html); win.document.close();
+  win.focus(); setTimeout(function(){ try{ win.print(); }catch(e){} }, 400);
+  toast('📄 Export PDF แล้ว','success');
+}
+
+// ══════════════════════════════
+// HELPERS
+// ══════════════════════════════
+function fmt(n){ return Number(n).toLocaleString('th-TH',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function fmtPDF(n){ return Number(n).toLocaleString('th-TH',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ══════════════════════════════
+// METRICS
+// ══════════════════════════════
+function updateMetrics(){
+  var pending = jobs.filter(function(j){ return j.status==='pending'; }).length;
+  var done = jobs.filter(function(j){ return j.status==='done'; }).length;
+  var sups = new Set(); jobs.forEach(function(j){ (j.suppliers||[]).forEach(function(s){ sups.add(s); }); });
+  document.getElementById('m-jobs').textContent = jobs.length;
+  document.getElementById('m-pending').textContent = pending;
+  document.getElementById('m-done').textContent = done;
+  document.getElementById('m-sups').textContent = sups.size;
+}
+
+// ══════════════════════════════
+// RENDER ALL
+// ══════════════════════════════
+function renderAll(){ renderJobs(); updateMetrics(); }
+function nav(){}
+
+// ══════════════════════════════
+// INIT
+// ══════════════════════════════
+(function(){
+  loadLocal();
+  loadFromSheet(function(){
+    renderAll();
+    if(jobs.length) selectJob(jobs[0].id);
+  });
+})();
+
+
+
+
+
+</script>
+</body>
+</html>
